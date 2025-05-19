@@ -71,16 +71,6 @@ run_demo() {
     echo -e "\n___ creating a shortcut to ADLS Gen2..."
     run_fab_command "ln /${_workspace_name}/${_lakehouse_name}/Files/wwi-raw-data.Shortcut --type adlsGen2 -i \"{\"location\": \"https://stfabdemos.dfs.core.windows.net/\", \"subpath\": \"fabdata/WideWorldImportersDW\", \"connectionId\": \"${_connection_id_adlsgen2}\"}\" -f"
 
-    # running jobs
-    echo -e "\n_ running pipeline..."
-    run_fab_command "job run /${_workspace_name}/${_pipeline_name}"
-
-    echo -e "\n_ running notebook..."
-    run_fab_command "job run /${_workspace_name}/01 - Create Delta Tables.Notebook"
-
-    echo -e "\n_ running notebook..."
-    run_fab_command "job run /${_workspace_name}/02 - Data Transformation - Business Aggregates.Notebook"
-
     # change DL connection
     replace_string_value $_sem_model_name "definition/expressions.tmdl" "XUO7C7SW7ONUHHLEI7JMT7CN3E-5NMTCG4VCUAELMP2UGNFR7CLCI.datawarehouse.fabric.microsoft.com" $_lakehouse_conn_string
     replace_string_value $_sem_model_name "definition/expressions.tmdl" "5ec27d10-f4e8-402c-8707-6c54fe94ef5c" $_lakehouse_conn_id
@@ -91,6 +81,16 @@ run_demo() {
 
     # report
     import_powerbi_report $_workspace_name $_report_name $_semantic_model_id
+
+    # running jobs
+    echo -e "\n_ running pipeline..."
+    run_fab_command "job run /${_workspace_name}/${_pipeline_name}"
+
+    echo -e "\n_ running notebook..."
+    run_fab_command "job run /${_workspace_name}/01 - Create Delta Tables.Notebook"
+
+    echo -e "\n_ running notebook..."
+    run_fab_command "job run /${_workspace_name}/02 - Data Transformation - Business Aggregates.Notebook"
 
     # open and clean up
     open_workspace $_workspace_name
